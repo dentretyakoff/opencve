@@ -10,6 +10,11 @@ class CveListSerializer(serializers.ModelSerializer):
 
 
 class CveDetailSerializer(serializers.ModelSerializer):
+    nvd_json = serializers.SerializerMethodField()
+
+    def get_nvd_json(self, obj):
+        return obj.nvd_json()
+
     class Meta:
         model = Cve
         fields = [
@@ -21,6 +26,7 @@ class CveDetailSerializer(serializers.ModelSerializer):
             "metrics",
             "weaknesses",
             "vendors",
+            "nvd_json",
         ]
 
 

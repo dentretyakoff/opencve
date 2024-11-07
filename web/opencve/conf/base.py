@@ -15,7 +15,7 @@ env.prefix = "OPENCVE_"
 environ.Env.read_env(BASE_DIR / "opencve/conf/.env")
 
 SECRET_KEY = env.str("SECRET_KEY", default="change_me")
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
