@@ -7,6 +7,7 @@ from cves.utils import extract_product_info
 class BaseCveSerializer(serializers.ModelSerializer):
     nvd_versions = serializers.SerializerMethodField()
     cvss_metric = serializers.SerializerMethodField()
+    exploitation = serializers.SerializerMethodField()
 
     def get_nvd_versions(self, obj):
         return extract_product_info(obj.nvd_json)
@@ -19,6 +20,9 @@ class BaseCveSerializer(serializers.ModelSerializer):
             obj.cvssV4_0.get("score", 0),
         )
 
+    def get_exploitation(self, obj):
+        return obj.ssvc.get("data", {}).get("options", {}).get("Exploitation")
+
     class Meta:
         model = Cve
         fields = [
@@ -28,7 +32,7 @@ class BaseCveSerializer(serializers.ModelSerializer):
             "description",
             "nvd_versions",
             "cvss_metric",
-            # "exploitation"
+            "exploitation",
         ]
 
 
@@ -41,6 +45,7 @@ class CveListSerializer(BaseCveSerializer):
             "description",
             "nvd_versions",
             "cvss_metric",
+            "exploitation",
         ]
 
 
@@ -57,6 +62,7 @@ class CveDetailSerializer(BaseCveSerializer):
             "vendors",
             "nvd_versions",
             "cvss_metric",
+            "exploitation",
         ]
 
 
