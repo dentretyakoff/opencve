@@ -13,7 +13,7 @@ class CveListSerializer(serializers.ModelSerializer):
 class CveDetailSerializer(serializers.ModelSerializer):
     nvd_versions = serializers.SerializerMethodField()
 
-    def get_nvd_json(self, obj):
+    def get_nvd_versions(self, obj):
         return extract_product_info(obj.nvd_json)
 
     class Meta:
