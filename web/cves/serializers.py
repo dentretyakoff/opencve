@@ -4,13 +4,7 @@ from cves.models import Cve, Product, Vendor, Weakness
 from cves.utils import extract_product_info
 
 
-class CveListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cve
-        fields = ["created_at", "updated_at", "cve_id", "description"]
-
-
-class CveDetailSerializer(serializers.ModelSerializer):
+class BaseCveSerializer(serializers.ModelSerializer):
     nvd_versions = serializers.SerializerMethodField()
 
     def get_nvd_versions(self, obj):
@@ -18,6 +12,16 @@ class CveDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cve
+        fields = ["created_at", "updated_at", "cve_id", "description", "nvd_versions"]
+
+
+class CveListSerializer(BaseCveSerializer):
+    class Meta(BaseCveSerializer.Meta):
+        fields = ["created_at", "updated_at", "cve_id", "description", "nvd_versions"]
+
+
+class CveDetailSerializer(BaseCveSerializer):
+    class Meta(BaseCveSerializer.Meta):
         fields = [
             "created_at",
             "updated_at",
