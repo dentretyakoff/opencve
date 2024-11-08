@@ -161,3 +161,33 @@ def get_metric_from_vector(vector, metric=None):
         data.update({"weight": weight, "text": text})
 
     return data
+
+def extract_product_info(nvd_json):
+    """Извлекает из raw_nvd_json версии софта с уязвимостью."""
+    product_versions = []
+    configurations = nvd_json.get("configurations", [])
+
+    for config in configurations:
+        for node in config.get("nodes", []):
+            for cpe_match in node.get("cpeMatch", []):
+                criteria = cpe_match.get("criteria")
+
+                if not criteria:
+                    continue
+                criteria_parts = criteria.split(':')
+                if len(criteria_parts) >= 5:
+                    vendor = criteria_parts[3]
+                    product = criteria_parts[4]
+                    version = criteria_parts[5] if criteria_parts[5] != "*" else None
+                    vulnerable = cpe_match.get("vulnerable", False)
+                    version_end_including = cpe_match.get("versionEndIncluding")
+                    
+                    product_versions.append({
+                        "vendor": vendor,
+                        "product": product,
+                        "version": version,
+                        "vulnerable": vulnerable,
+                        "version_end_including": version_end_including
+                    })
+
+    return product_versions

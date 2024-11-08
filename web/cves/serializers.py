@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from cves.models import Cve, Product, Vendor, Weakness
+from cves.utils import extract_product_info
 
 
 class CveListSerializer(serializers.ModelSerializer):
@@ -10,10 +11,10 @@ class CveListSerializer(serializers.ModelSerializer):
 
 
 class CveDetailSerializer(serializers.ModelSerializer):
-    nvd_json = serializers.SerializerMethodField()
+    nvd_versions = serializers.SerializerMethodField()
 
     def get_nvd_json(self, obj):
-        return obj.nvd_json
+        return extract_product_info(obj.nvd_json)
 
     class Meta:
         model = Cve
@@ -26,7 +27,7 @@ class CveDetailSerializer(serializers.ModelSerializer):
             "metrics",
             "weaknesses",
             "vendors",
-            "nvd_json",
+            "nvd_versions",
         ]
 
 
