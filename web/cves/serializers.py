@@ -21,7 +21,10 @@ class BaseCveSerializer(serializers.ModelSerializer):
         )
 
     def get_exploitation(self, obj):
-        return obj.ssvc.get("data", {}).get("options", {}).get("Exploitation")
+        exploitation = obj.ssvc.get("data", {}).get("options", {}).get("Exploitation")
+        if exploitation == "none":
+            return None
+        return exploitation
 
     class Meta:
         model = Cve
