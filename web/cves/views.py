@@ -92,7 +92,7 @@ def list_filtered_cves(request):
     # Filter by updated_at
     updated_at = request.GET.get("updated_at")
     if updated_at:
-        query = query.filter(updated_at_gte=updated_at)
+        query = query.filter(updated_at_lte=updated_at)
 
     return query.all()
 
