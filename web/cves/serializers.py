@@ -10,7 +10,7 @@ class BaseCveSerializer(serializers.ModelSerializer):
     exploitation = serializers.SerializerMethodField()
 
     def get_versions(self, obj):
-        return extract_product_info(obj.nvd_json)
+        return extract_product_info(obj.kb_json)
 
     def get_cvss_metric(self, obj):
         return max(
