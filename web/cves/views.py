@@ -89,6 +89,11 @@ def list_filtered_cves(request):
         tag = get_object_or_404(UserTag, name=tag, user=request.user)
         query = query.filter(cve_tags__tags__contains=tag.name)
 
+    # Filter by updated_at
+    updated_at = request.GET.get("updated_at")
+    if updated_at:
+        query = query.filter(updated_at_gte=updated_at)
+
     return query.all()
 
 
