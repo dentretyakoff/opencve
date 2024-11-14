@@ -162,32 +162,25 @@ def get_metric_from_vector(vector, metric=None):
 
     return data
 
-def extract_product_info(nvd_json):
-    """Извлекает из raw_nvd_json версии софта с уязвимостью."""
+def extract_product_info(kb_json):
+    """Извлекает из kb_json версии софта."""
     product_versions = []
-    configurations = nvd_json.get("configurations", [])
+    cpes = list(set(
+        kb_json.get("mitre", {}).get("cpes", []) +
+        kb_json.get("nvd", {}).get("cpes", []) +
+        kb_json.get("vulnrichment", {}).get("cpes", [])))
 
-    for config in configurations:
-        for node in config.get("nodes", []):
-            for cpe_match in node.get("cpeMatch", []):
-                criteria = cpe_match.get("criteria")
+    for cpe in cpes:
+        cpe_parts = cpe.split(':')
+        if len(cpe_parts) >= 6:
+            vendor = cpe_parts[3]
+            product = cpe_parts[4]
+            version = cpe_parts[5] if cpe_parts[5] != "*" else None
 
-                if not criteria:
-                    continue
-                criteria_parts = criteria.split(':')
-                if len(criteria_parts) >= 5:
-                    vendor = criteria_parts[3]
-                    product = criteria_parts[4]
-                    version = criteria_parts[5] if criteria_parts[5] != "*" else None
-                    vulnerable = cpe_match.get("vulnerable", False)
-                    version_end_including = cpe_match.get("versionEndIncluding")
-                    
-                    product_versions.append({
-                        "vendor": vendor,
-                        "product": product,
-                        "version": version,
-                        "vulnerable": vulnerable,
-                        "version_end_including": version_end_including
-                    })
+            product_versions.append({
+                "vendor": vendor,
+                "product": product,
+                "version": version,
+            })
 
     return product_versions
